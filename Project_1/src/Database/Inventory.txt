@@ -1,0 +1,25 @@
+furniture, Wood Platform Style Bed, 189.00, 5
+furniture, Red Loung Chair, 115.58, 2
+furniture, Office Chair, 65.99, 3
+furniture, L-Shape Office Desk, 158.99, 1
+furniture, Swivel Leather Barstool, 24.99, 2
+rugs, Diamond Ring
+rugs, Gold Ring
+rugs, 
+rugs, 
+rugs, 
+decor, 
+decor, 
+decor, 
+decor, 
+decor, 
+bed_bath, 
+bed_bath, 
+bed_bath, 
+bed_bath, 
+bed_bath, 
+home_improvement, 
+home_improvement, 
+home_improvement, 
+home_improvement, 
+home_improvement, 
