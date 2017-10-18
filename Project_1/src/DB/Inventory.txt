@@ -1,0 +1,35 @@
+furniture,Wood Platform Style Bed,189.00,5
+furniture,Red Loung Chair,115.58,2
+furniture,Office Chair,65.99,3
+furniture,L-Shape Office Desk,158.99,1
+furniture,Swivel Leather Barstool,24.99,2
+rugs,Indoor Rug,19.95,10
+rugs,Outdoor Rug,14.95,8
+rugs,Afghan Rug,24.95,6
+rugs,Persian Rug,29.95,4
+rugs,Throw Rug,14.95,5
+decor,Stained Glass Panel,32.95,10
+decor,Chandelier,49.95,4
+decor,Ceiling Fan,24.95,7
+decor,Candle Holder,9.95,6
+decor,Window Covering,22.95,7
+bed_bath,Mattress,99.95,4
+bed_bath,Comforter,29.99,3
+bed_bath,Towel,14.95,6
+bed_bath,Shower Rack,14.95,4
+bed_bath,Soap Dispenser,4.95,5
+home_improvement,Refrigerator,99.95,8
+home_improvement,Dishwasher,99.95,6
+home_improvement,Garage Door,129.95,3
+home_improvement,Jetted Tub,89.95,6
+home_improvement,Steam Cleaner,74.95,5
+kitchen,Coffee Maker,19.95,2
+kitchen,Blender,29.95,10
+kitchen,Slow Cooker,19.95,7
+kitchen,Bread Box,4.95,3
+kitchen,Toaster Oven,19.95,4
+outdoor,Hammock,49.95,10
+outdoor,Swing Set,149.95,7
+outdoor,Fire Pit,49.95,6
+outdoor,Gas Grill,89.95,4
+outdoor,Charcoal Grill,69.95,8

@@ -9,7 +9,7 @@ public class UserAccount
 	private String lastName;
 	private String email;
 	private String password;
-	private char isMember;
+	private boolean isMember;
 	
 	/**
 	 * Constructor
@@ -21,7 +21,7 @@ public class UserAccount
 	 * @param isMember
 	 */
 	public UserAccount(String firstName, char middleInitial, String lastName,
-			String email, String password, char isMember)
+			String email, String password, boolean isMember)
 	{
 		setFirstName(firstName);
 		setMiddleInitial(middleInitial);
@@ -70,7 +70,7 @@ public class UserAccount
 		this.password = password;
 	}
 	
-	public void setMembership(char isMember)
+	public void setMembership(boolean isMember)
 	{
 		this.isMember = isMember;
 	}
@@ -100,7 +100,7 @@ public class UserAccount
 		return password;
 	}
 	
-	public char getMembership()
+	public boolean getMembership()
 	{
 		return isMember;
 	}
@@ -110,7 +110,7 @@ public class UserAccount
 		String str = "Name: " + firstName + " " + Character.toUpperCase(middleInitial)
 				+ ". " + lastName
 				+ "\nEmail: " + email
-				+ "\nUClub Membership: " + Character.toUpperCase(isMember);
+				+ "\nUClub Membership: " + isMember;
 		
 		return str;
 	}
