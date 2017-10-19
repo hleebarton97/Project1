@@ -31,7 +31,6 @@ public class Database
 	 */
 	public void parseInventoryFromFile() throws FileNotFoundException
 	{
-		
 		// open the file to read Items into the array
 		String fileName;
 		File file;
@@ -68,10 +67,38 @@ public class Database
 	}
 	
 	/**
+	 * The writeCurrentInventory method creates a PrintWriter output file object
+	 * and opens the Inventory.txt file for overwriting.
+	 * writeCurrentInventory steps through the ArrayList of Items,
+	 * creating String objects formatted to the desired output and saves them to the
+	 * file.
+	 * @param currentInventory The ArrayList of Items to overwrite the Inventory file with.
+	 * @throws FileNotFoundException
+	 */
+	public void writeCurrentInventory(ArrayList<Item> currentInventory) throws FileNotFoundException
+	{
+		PrintWriter outputFile = new PrintWriter("src/DB/Inventory.txt");
+		String outputLine;
+		
+		for (Item itm : inventory)
+		{
+			outputLine = "";
+			outputLine += itm.getItemType() + ","
+					+ itm.getItemName() + ","
+					+ itm.getItemPrice() + ","
+					+ itm.getItemQuantity();
+			
+			outputFile.println(outputLine);
+		}
+		
+		outputFile.close();
+	}
+	
+	/**
 	 * The copyInventory method copies an ArrayList of Items.
 	 * @return A copy of an ArrayList of Items.
 	 */
-	public ArrayList copyInventory()
+	public ArrayList<Item> copyInventory()
 	{
 		ArrayList<Item> copy = new ArrayList<Item>();
 		
@@ -133,13 +160,14 @@ public class Database
 	 * UserAccount's email and password.
 	 * @param email The email to be checked.
 	 * @param password The password to be checked.
-	 * @return The index of the account in the ArrayList.
+	 * @return The index of the account in the ArrayList if it exists;
+	 * 			otherwise, -1.
 	 */
 	public int accountExistsAt(String email, String password)
 	{
-		for(int i = 0; i < accounts.size(); i++)
+		for (int i = 0; i < accounts.size(); i++)
 		{
-			if(email.equalsIgnoreCase(accounts.get(i).getEmail())
+			if (email.equalsIgnoreCase(accounts.get(i).getEmail())
 					&& password.equals(accounts.get(i).getPassword()))
 				return i;
 		}
@@ -156,8 +184,9 @@ public class Database
 	{
 		boolean status = false;
 		
-		if (accounts.contains(email))
-			status = true;
+		for (UserAccount anAccount : accounts)
+			if (anAccount.getEmail().equalsIgnoreCase(email))
+				status = true;
 
 		return status;
 	}
@@ -175,6 +204,46 @@ public class Database
 		return myAccount;
 	}
 	
+	/**
+	 * The addUserAccount method adds a new user account
+	 * to the ArrayList of UserAccounts.
+	 * @param newUser The UserAccount to be added to the
+	 * 			accounts ArrayList.
+	 */
+	public void addUserAccount(UserAccount newUser)
+	{
+		accounts.add(newUser);
+	}
+	
+	/**
+	 * The writeCurrentUserAccounts method creates a PrintWriter output file object
+	 * and opens the UserAccounts.txt file for overwriting.
+	 * writeCurrentUserAccounts steps through the ArrayList of USerAccounts,
+	 * creating String objects formatted to the desired output and saves them to the
+	 * file.
+	 * @throws FileNotFoundException
+	 */
+	public void writeCurrentUserAccounts() throws FileNotFoundException
+	{
+		PrintWriter outputFile = new PrintWriter("src/DB/UserAccounts.txt");
+		String outputLine;
+		
+		for (UserAccount anAccount : accounts)
+		{
+			outputLine = "";
+			outputLine += anAccount.getFirstName() + "," 
+					+ anAccount.getMiddleInitial() + ","
+					+ anAccount.getLastName() + ","
+					+ anAccount.getEmail() + ","
+					+ anAccount.getPassword() + ","
+					+ anAccount.getMembership();
+			
+			outputFile.println(outputLine);
+		}
+		
+		outputFile.close();
+	}
+
 	public void displayInventory()
 	{
 		int i = 0;
