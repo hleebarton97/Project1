@@ -8,8 +8,8 @@ import java.io.*;
 
 public class Database
 {
-	private ArrayList<Item> inventory = new ArrayList<Item>();
-	private ArrayList<UserAccount> accounts = new ArrayList<UserAccount>();
+	private ArrayList<Item> inventory;
+	private ArrayList<UserAccount> accounts;
 
 	/**
 	 * Constructor
@@ -17,15 +17,19 @@ public class Database
 	 */
 	public Database() throws FileNotFoundException
 	{
-		setInventory();
-		setUserAccounts();
+		inventory = new ArrayList<Item>();
+		accounts = new ArrayList<UserAccount>();
+		
+		parseInventoryFromFile();
+		parseUserAccountsFromFile();
 	}
 	
 	/**
-	 * setInventory method
+	 * The parseInventoryFromFile method opens up the Uberstock Inventory
+	 * file and parses the items into an ArrayList of Items.
 	 * @throws FileNotFoundException 
 	 */
-	public void setInventory() throws FileNotFoundException
+	public void parseInventoryFromFile() throws FileNotFoundException
 	{
 		
 		// open the file to read Items into the array
@@ -63,6 +67,10 @@ public class Database
 		inputFile.close();
 	}
 	
+	/**
+	 * The copyInventory method copies an ArrayList of Items.
+	 * @return A copy of an ArrayList of Items.
+	 */
 	public ArrayList copyInventory()
 	{
 		ArrayList<Item> copy = new ArrayList<Item>();
@@ -75,7 +83,12 @@ public class Database
 		return copy;
 	}
 	
-	public void setUserAccounts() throws FileNotFoundException
+	/**
+	 * The parseUserAccountsFromFile method opens up the Uberstock UserAccounts
+	 * file and parses the accounts into an ArrayList of UserAccounts.
+	 * @throws FileNotFoundException 
+	 */
+	public void parseUserAccountsFromFile() throws FileNotFoundException
 	{
 		// open the file to read UserAccounts into the array
 		String fileName;
@@ -114,20 +127,31 @@ public class Database
 		inputFile.close();
 	}
 	
+	/**
+	 * The accountExistsAt method checks the ArrayList of UserAccounts
+	 * and determines if the email and password parameters match a
+	 * UserAccount's email and password.
+	 * @param email The email to be checked.
+	 * @param password The password to be checked.
+	 * @return The index of the account in the ArrayList.
+	 */
 	public int accountExistsAt(String email, String password)
 	{
-		int i = 0;
-		while (accounts.get(i) != null)
+		for(int i = 0; i < accounts.size(); i++)
 		{
-			if (email.equalsIgnoreCase(accounts.get(i).getEmail())
+			if(email.equalsIgnoreCase(accounts.get(i).getEmail())
 					&& password.equals(accounts.get(i).getPassword()))
 				return i;
-			i++;
 		}
-		
 		return -1;
 	}
 	
+	/**
+	 * The emailExists method checks if the email parameter matches an
+	 * email in the ArrayList of UserAccounts.
+	 * @param email The email to be checked for its existence.
+	 * @return True if found; false otherwise.
+	 */
 	public boolean emailExists(String email)
 	{
 		boolean status = false;
@@ -138,6 +162,12 @@ public class Database
 		return status;
 	}
 	
+	/**
+	 * The getUserAccountAt accepts an index of the UserAccount
+	 * to return from the ArrayList of UserAccounts.
+	 * @param index The UserAccount location in the ArrayList of User Accounts.
+	 * @return A reference to a UserAccount.
+	 */
 	public UserAccount getUserAccountAt(int index)
 	{
 		UserAccount myAccount = new UserAccount(accounts.get(index));
