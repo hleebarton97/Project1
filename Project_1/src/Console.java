@@ -2,7 +2,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
-	ProjectDriver
+	Project Driver
 */
 
 import java.util.Scanner;
@@ -84,7 +84,14 @@ public class Console
 			}
 		} while (choice != 9);
 		
-		// some save method before exiting if choice == 9
+		// update the UserAccount file
+		myDatabase.writeCurrentUserAccounts();
+		
+		// Update the Inventory file
+		myDatabase.writeCurrentInventory(currentInventory);
+		
+		//TODO: Some method to save the state of a user's shopping cart
+		
 		System.exit(0);
 	}
 	
@@ -189,6 +196,9 @@ public class Console
 		// create the account
 		myAccount = new UserAccount(firstName, middleInitial, lastName, email, password, isMember);
 		
+		// add the account to the database
+		myDatabase.addUserAccount(myAccount);
+		
 		return myAccount;
 	}
 
@@ -223,9 +233,6 @@ public class Console
 	
 	public static void displayFurniture(ArrayList<Item> currentInventory)
 	{
-		for (Item i : currentInventory)
-		{
-			System.out.println(i);
-		}
+		
 	}
 }
