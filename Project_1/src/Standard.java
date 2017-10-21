@@ -52,12 +52,7 @@ public class Standard extends User
 			System.out.println("Currently no Items in your Cart!");
 		
 		System.out.println("-----------------------------------------");
-		System.out.println("Press \"ENTER\" to continue...");
-		
-		try {
-			System.in.read(); }
-		catch(IOException e) {
-			e.printStackTrace(); }
+
 	}
 
 	@Override
@@ -76,9 +71,12 @@ public class Standard extends User
 	}
 
 	@Override
-	public boolean cartIsEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean cartIsEmpty() 
+	{
+		if(cart.getNumItems() != 0)
+			return false;
+		else
+			return true;
 	}
 
 }

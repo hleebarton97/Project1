@@ -56,27 +56,27 @@ public class Console
 					break;
 					
 				case 2:
-					displayRugs(currentInventory, keyboard);
+					displayRugs(currentInventory, myAccount, keyboard);
 					break;
 				
 				case 3:
-					displayDecor(currentInventory, keyboard);
+					displayDecor(currentInventory, myAccount, keyboard);
 					break;
 					
 				case 4:
-					displayBedAndBath(currentInventory, keyboard);
+					displayBedAndBath(currentInventory, myAccount, keyboard);
 					break;
 					
 				case 5:
-					displayHomeImprovement(currentInventory, keyboard);
+					displayHomeImprovement(currentInventory, myAccount, keyboard);
 					break;
 					
 				case 6:
-					displayKitchen(currentInventory, keyboard);
+					displayKitchen(currentInventory, myAccount, keyboard);
 					break;
 					
 				case 7:
-					displayOutdoor(currentInventory, keyboard);
+					displayOutdoor(currentInventory, myAccount, keyboard);
 					break;
 					
 				case 8:
@@ -379,21 +379,32 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		choice = getCategoryItemChoice(keyboard);
-		
-		if(choice != 0)
-			myAccount.addItemToCart(currentInventory.get(choice - 1));
+		do
+		{
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 0 && choice < 6)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+				}
+		}
+		while(choice < 0 || choice > 6);
 		
 		
 		System.out.println();
 	}
 	
 	
-	private static void displayRugs(ArrayList<Item> currentInventory, Scanner keyboard) 
+	private static void displayRugs(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard) 
 	{
 		int choice = 0;
+		boolean error = false;
 		
-		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("Select a Rug Item to add to your shopping cart");
 		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("rugs"))
@@ -405,16 +416,32 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		choice = getCategoryItemChoice(keyboard);
+		do
+		{
+			error = false;
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 5 && choice < 11)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+					error = true;
+				}
+		}
+		while(error);
 		
 		System.out.println();
 	}
 	
-	private static void displayDecor(ArrayList<Item> currentInventory, Scanner keyboard)
+	private static void displayDecor(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
 	{
 		int choice = 0;
+		boolean error = false;
 		
-		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("Select a Decor Item to add to your shopping cart");
 		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("decor"))
@@ -426,16 +453,32 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		getCategoryItemChoice(keyboard);
+		do
+		{
+			error = false;
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 10 && choice < 16)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+					error = true;
+				}
+		}
+		while(error);
 		
 		System.out.println();
 	}
 	
-	private static void displayBedAndBath(ArrayList<Item> currentInventory, Scanner keyboard)
+	private static void displayBedAndBath(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
 	{
 		int choice = 0;
+		boolean error = false;
 		
-		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("Select a Bed and Bath Item to add to your shopping cart");
 		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("bed_bath"))
@@ -447,16 +490,32 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		getCategoryItemChoice(keyboard);
+		do
+		{
+			error = false;
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 15 && choice < 21)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+					error = true;
+				}
+		}
+		while(error);
 		
 		System.out.println();
 	}
 	
-	private static void displayHomeImprovement(ArrayList<Item> currentInventory, Scanner keyboard)
+	private static void displayHomeImprovement(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
 	{
 		int choice = 0;
+		boolean error = false;
 		
-		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("Select a Home Improvement Item to add to your shopping cart");
 		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("home_improvement"))
@@ -468,16 +527,32 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		getCategoryItemChoice(keyboard);
+		do
+		{
+			error = false;
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 20 && choice < 26)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+					error = true;
+				}
+		}
+		while(error);
 		
 		System.out.println();
 	}
 	
-	private static void displayKitchen(ArrayList<Item> currentInventory, Scanner keyboard)
+	private static void displayKitchen(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
 	{
 		int choice = 0;
+		boolean error = false;
 		
-		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("Select a Kitchen Item to add to your shopping cart");
 		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("kitchen"))
@@ -489,14 +564,30 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		getCategoryItemChoice(keyboard);
+		do
+		{
+			error = false;
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 25 && choice < 31)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+					error = true;
+				}
+		}
+		while(error);
 		
 		System.out.println();
 	}
 	
-	private static void displayOutdoor(ArrayList<Item> currentInventory, Scanner keyboard)
+	private static void displayOutdoor(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
 	{
 		int choice = 0;
+		boolean error = false;
 		
 		System.out.println("Select a Furniture Item to add to your shopping cart");
 		System.out.println("---------------");
@@ -510,7 +601,22 @@ public class Console
 		System.out.println("0 takes you back to the menu.");
 		System.out.println("---------------");
 		
-		getCategoryItemChoice(keyboard);
+		do
+		{
+			error = false;
+			choice = getCategoryItemChoice(keyboard);
+			
+			if(choice != 0)
+				if(choice > 30 && choice < 36)
+					myAccount.addItemToCart(currentInventory.get(choice - 1));
+				else
+				{
+					System.out.println("ERROR: Choice is out of range of items.");
+					System.out.println();
+					error = true;
+				}
+		}
+		while(error);
 		
 		System.out.println();
 	}
