@@ -9,7 +9,7 @@ import java.io.*;
 public class Database
 {
 	private ArrayList<Item> inventory;
-	private ArrayList<UserAccount> accounts;
+	private ArrayList<User> accounts;
 
 	/**
 	 * Constructor
@@ -18,7 +18,7 @@ public class Database
 	public Database() throws FileNotFoundException
 	{
 		inventory = new ArrayList<Item>();
-		accounts = new ArrayList<UserAccount>();
+		accounts = new ArrayList<User>();
 		
 		parseInventoryFromFile();
 		parseUserAccountsFromFile();
@@ -127,9 +127,10 @@ public class Database
 
 		// variables needed to read in UserAccounts into the array
 		int i = 0;
-		String input, firstName, lastName, email, password;
+		String input, firstName, lastName, email, password, rewards;
 		char middleInitial;
-		boolean isMember;
+		String type;
+		double reward = 0;
 		
 		while(inputFile.hasNext())
 		{
@@ -143,10 +144,21 @@ public class Database
 			lastName = tokens[2];
 			email = tokens[3];
 			password = tokens[4];
-			isMember = Boolean.valueOf(tokens[5]);
+			type = tokens[5];
+			rewards = tokens[6];
 			
-			accounts.add(i, new UserAccount(firstName, middleInitial, lastName,
-					email, password, isMember));
+			if(!rewards.equals("null"))
+				reward = Double.parseDouble(rewards);
+			
+			if(type.equals("ADMIN"))
+				accounts.add(i, new Admin(firstName, middleInitial, lastName, email, password));
+			else if(type.equals("STANDARD"))
+				accounts.add(i, new Standard(firstName, middleInitial, lastName, email, password));
+			else if(type.equals("MEMBER"))
+				accounts.add(i, new Member(firstName, middleInitial, lastName, email, password, reward));
+			else
+				System.out.println("ERROR: parseUserAccountsFromFile()");
+			
 			i++;
 		}
 		
@@ -184,7 +196,7 @@ public class Database
 	{
 		boolean status = false;
 		
-		for (UserAccount anAccount : accounts)
+		for (User anAccount : accounts)
 			if (anAccount.getEmail().equalsIgnoreCase(email))
 				status = true;
 
@@ -197,9 +209,9 @@ public class Database
 	 * @param index The UserAccount location in the ArrayList of User Accounts.
 	 * @return A reference to a UserAccount.
 	 */
-	public UserAccount getUserAccountAt(int index)
-	{
-		UserAccount myAccount = new UserAccount(accounts.get(index));
+	public User getUserAccountAt(int index)
+	{	
+		User myAccount = accounts.get(index);
 		
 		return myAccount;
 	}
@@ -210,9 +222,20 @@ public class Database
 	 * @param newUser The UserAccount to be added to the
 	 * 			accounts ArrayList.
 	 */
-	public void addUserAccount(UserAccount newUser)
+	public void addUserAccount(User newUser)
 	{
 		accounts.add(newUser);
+		
+		try
+		{
+			writeCurrentUserAccounts(); // Write current user accounts when new user is added.
+		}
+		catch(FileNotFoundException e)
+		{
+			System.out.println();
+			System.out.println(e);
+			System.out.println();
+		}
 	}
 	
 	/**
@@ -228,7 +251,7 @@ public class Database
 		PrintWriter outputFile = new PrintWriter("src/DB/UserAccounts.txt");
 		String outputLine;
 		
-		for (UserAccount anAccount : accounts)
+		for (User anAccount : accounts)
 		{
 			outputLine = "";
 			outputLine += anAccount.getFirstName() + "," 
@@ -236,7 +259,13 @@ public class Database
 					+ anAccount.getLastName() + ","
 					+ anAccount.getEmail() + ","
 					+ anAccount.getPassword() + ","
-					+ anAccount.getMembership();
+					+ anAccount.getType();
+			
+			// Check acct type for rewards.
+			if(anAccount.getType().equals("MEMBER") && anAccount instanceof Member)
+				outputLine += "," + anAccount.getReward();
+			else
+				outputLine += ",null";
 			
 			outputFile.println(outputLine);
 		}

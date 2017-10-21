@@ -62,6 +62,16 @@ public class Item
 		itemQuantity += num;
 	}
 	
+	public void decrementItemQuantity()
+	{
+		itemQuantity--;
+	}
+	
+	public void incrementItemQuantity()
+	{
+		itemQuantity++;
+	}
+	
 	public String getItemType()
 	{
 		return itemType;
@@ -85,8 +95,20 @@ public class Item
 	public String toString()
 	{
 		String str = "Item: " + itemName
-				+ "\nPrice: $" + itemPrice
-				+ "\nQuantity: " + itemQuantity;
+				+ "\nPrice: $" + itemPrice;
+		
+		if(itemQuantity != 0)
+			str += "\nQuantity: " + itemQuantity;
+		else
+			str += "\nQuantity: SOLD OUT!";
+		
+		return str;
+	}
+	
+	public String displayItem()
+	{
+		String str = "Item: " + itemName
+				+ "\nPrice: $" + itemPrice;
 		
 		return str;
 	}

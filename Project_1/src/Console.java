@@ -1,9 +1,10 @@
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
-	Project Driver
-*/
+ * Console.
+ */
 
 import java.util.Scanner;
 
@@ -24,7 +25,7 @@ public class Console
 		int choice;
 		
 		// to hold a UserAccount
-		UserAccount myAccount;
+		User myAccount;
 		
 		// have the user login or register
 		do
@@ -51,35 +52,35 @@ public class Console
 			switch(choice)
 			{
 				case 1:
-					displayFurniture(currentInventory);
+					displayFurniture(currentInventory, myAccount, keyboard);
 					break;
 					
 				case 2:
-					displayRugs(currentInventory);
+					displayRugs(currentInventory, keyboard);
 					break;
 				
 				case 3:
-					displayDecor(currentInventory);
+					displayDecor(currentInventory, keyboard);
 					break;
 					
 				case 4:
-					displayBedAndBath(currentInventory);
+					displayBedAndBath(currentInventory, keyboard);
 					break;
 					
 				case 5:
-					displayHomeImprovement(currentInventory);
+					displayHomeImprovement(currentInventory, keyboard);
 					break;
 					
 				case 6:
-					displayKitchen(currentInventory);
+					displayKitchen(currentInventory, keyboard);
 					break;
 					
 				case 7:
-					displayOutdoor(currentInventory);
+					displayOutdoor(currentInventory, keyboard);
 					break;
 					
 				case 8:
-					// some method
+					displayCart(currentInventory, myAccount, keyboard);
 					break;
 			}
 		} while (choice != 9);
@@ -94,7 +95,7 @@ public class Console
 		
 		System.exit(0);
 	}
-
+	
 	/**
 	 * The loginMenu method prompts the user
 	 * to login or register and returns the
@@ -103,41 +104,60 @@ public class Console
 	 */
 	public static int getloginMenuChoice(Scanner keyboard)
 	{
-		int choice; // to hold the users choice
+		int choice = 0; // to hold the users choice
+		boolean error; // error checking.
 
 		// get the users choice
 		do
 		{
+			error = false;
+			
 			System.out.println("Welcome to Overstock.com");
 			System.out.println();
 			System.out.println("1: Login");
 			System.out.println("2: Register");
+			System.out.println();
 			
-			choice = keyboard.nextInt();
+			System.out.print(":: ");
+			
+			try {
+				choice = keyboard.nextInt(); }
+			catch(Exception e) {
+				System.out.println("ERROR: Invalid Choice. Please try again.\n\n");
+				error = true;
+			}
 			keyboard.nextLine(); // discard newline character in string buffer
+			System.out.println();
 			
 			if (choice < 1 || choice > 2)
-				System.out.println("ERROR: Invalid Choice. Please try again.\n\n");
+			{
+				if(!error)
+				{
+					System.out.println("ERROR: Invalid Choice. Please try again.\n\n");
+					error = true;
+				}
+			}
 			
-		} while (choice < 1 || choice > 2);
+		} while (error);
 
 		return choice;
 	}
 	
-	public static UserAccount login(Database myDatabase, Scanner keyboard)
+	public static User login(Database myDatabase, Scanner keyboard)
 	{
 		// variables needed to login
 		String email, password;
 		
 		// to hold a UserAccount
-		UserAccount myAccount;
+		User myAccount;
 		
 		// get the users email and password
-		System.out.println("Enter the Email Address for your account: ");
+		System.out.print("Enter the Email Address for your account: ");
 		email = keyboard.nextLine();
 		
-		System.out.println("Enter the password for your account: ");
+		System.out.print("Enter the password for your account: ");
 		password = keyboard.nextLine();
+		System.out.println();
 		
 		// search for the account in the database
 		int index = myDatabase.accountExistsAt(email, password);
@@ -148,24 +168,25 @@ public class Console
 			myAccount = null;
 		}
 		else
-			myAccount = new UserAccount(myDatabase.getUserAccountAt(index));
+			myAccount = myDatabase.getUserAccountAt(index);
 		
 		return myAccount;
 	}
 	
-	public static UserAccount register(Database myDatabase, Scanner keyboard)
+	public static User register(Database myDatabase, Scanner keyboard)
 	{
 		// variables needed to register a new user
 		String input, firstName, lastName, email, password;
 		char middleInitial;
-		boolean isMember;
+		boolean error = false;
 		
 		// to hold a UserAccount
-		UserAccount myAccount;
+		User myAccount = null;
 		
 		// get the account information
-		System.out.println("Enter your email address: ");
+		System.out.print("Enter your email address: ");
 		email = keyboard.nextLine();
+		System.out.println();
 		
 		// check if the email address already exists
 		if (myDatabase.emailExists(email))
@@ -176,25 +197,49 @@ public class Console
 			return myAccount;
 		}
 		
-		System.out.println("Enter your First Name: ");
+		System.out.print("Enter your First Name: ");
 		firstName = keyboard.nextLine();
+		System.out.println();
 		
-		System.out.println("Enter your Middle Initial: ");
+		System.out.print("Enter your Middle Initial: ");
 		input = keyboard.nextLine();
 		middleInitial = input.charAt(0);
+		System.out.println();
 		
-		System.out.println("Enter your Last Name: ");
+		System.out.print("Enter your Last Name: ");
 		lastName = keyboard.nextLine();
+		System.out.println();
 		
-		System.out.println("Enter the desired account Password: ");
+		System.out.print("Enter the desired account Password: ");
 		password = keyboard.nextLine();
+		System.out.println();
 		
-		System.out.println("Would you like to become a UClub Member for $19.95 annually? (Y/N): ");
-		input = keyboard.nextLine();
-		isMember = Boolean.valueOf(input);
+		do
+		{
+			error = false;
+			
+			System.out.print("Would you like to become a UClub Member for $19.95 annually? (Y/N): ");
+			input = keyboard.nextLine(); // Receive input.
+			System.out.println();
+			
+			// Check answer and create a appropriate account.
+			String tempInput = input.toUpperCase();
+			
+			if(tempInput.equals("Y"))
+				myAccount = new Member(firstName, middleInitial, lastName, email, password, 0.0);
+			else if(tempInput.equals("N"))
+				myAccount = new Standard(firstName, middleInitial, lastName, email, password);
+			else
+			{
+				error = true;
+				System.out.println("ERROR: Member input selection invalid.");
+			}
+		}
+		while(error);
+			
 		
 		// create the account
-		myAccount = new UserAccount(firstName, middleInitial, lastName, email, password, isMember);
+		//myAccount = new UserAccount(firstName, middleInitial, lastName, email, password, isMember);
 		
 		// add the account to the database
 		myDatabase.addUserAccount(myAccount);
@@ -221,8 +266,10 @@ public class Console
 			System.out.println("8: View Shopping Cart");
 			System.out.println("9: Log Out");
 			
+			System.out.print(":: ");
 			choice = keyboard.nextInt();
 			keyboard.nextLine(); // remove the newline character from the keyboard buffer
+			System.out.println();
 			if (choice < 1 || choice > 9)
 				System.out.println("ERROR: Please select a valid menu choice.\n");
 			
@@ -231,56 +278,241 @@ public class Console
 		return choice;
 	}
 	
-	public static void displayFurniture(ArrayList<Item> currentInventory)
+	public static int getCategoryItemChoice(Scanner keyboard)
 	{
+		int choice = 0;
+		boolean error = false;
+		
+		do
+		{
+			error = false;
+			System.out.print("Enter item's number: ");
+			
+			try {
+			choice = keyboard.nextInt(); }
+			catch(Exception e) {
+				System.out.println("ERROR: Invalid Choice. ");
+				System.out.println();
+				error = true; }
+			
+			keyboard.nextLine();
+			System.out.println();
+			
+			if(choice < 0 || choice > 35)
+				error = true;
+		}
+		while(error);
+		
+		return choice;
+	}
+	
+	public static int getCartOptionChoice(Scanner keyboard)
+	{
+		int choice = 0;
+		boolean error = false;
+		
+		do
+		{
+			error = false;
+			
+			try {
+				System.out.print(":: ");
+				choice = keyboard.nextInt(); }
+			catch(Exception e) {
+				System.out.println("ERROR: Invalid Choice. ");
+				System.out.println();
+				error = true; }
+			
+			keyboard.nextLine();
+			System.out.println();
+		}
+		while(error);
+		
+		return choice;
+	}
+	
+	public static void displayCart(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
+	{
+		int choice = 0;
+		
+		myAccount.showCart();
+		
+		if(!myAccount.cartIsEmpty())
+		{
+			System.out.println("Please enter 0 to continue");
+			System.out.println("Or enter the item number to remove it from the cart.");
+			System.out.println("-----------------------------------------");
+			
+			choice = getCartOptionChoice(keyboard);
+			
+			if(choice != 0)
+				myAccount.removeItemFromCart(choice);
+		}
+		else
+		{
+			System.out.println("Press \"ENTER\" to continue...");
+			
+			try {
+				System.in.read(); }
+			catch(IOException e) {
+				e.printStackTrace(); }
+		}
+		
+		System.out.println();
+	}
+	
+// ------------- DISPLAY CATEGORIES ---------------- //	
+	
+	public static void displayFurniture(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
+	{
+		int choice = 0;
 		
 		System.out.println("Select a Furniture Item to add to your shopping cart");
 		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("furniture"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		choice = getCategoryItemChoice(keyboard);
+		
+		if(choice != 0)
+			myAccount.addItemToCart(currentInventory.get(choice - 1));
+		
+		
+		System.out.println();
 	}
 	
 	
-	private static void displayRugs(ArrayList<Item> currentInventory) 
+	private static void displayRugs(ArrayList<Item> currentInventory, Scanner keyboard) 
 	{
+		int choice = 0;
+		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("rugs"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		choice = getCategoryItemChoice(keyboard);
+		
+		System.out.println();
 	}
 	
-	private static void displayDecor(ArrayList<Item> currentInventory)
+	private static void displayDecor(ArrayList<Item> currentInventory, Scanner keyboard)
 	{
+		int choice = 0;
+		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("decor"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		getCategoryItemChoice(keyboard);
+		
+		System.out.println();
 	}
 	
-	private static void displayBedAndBath(ArrayList<Item> currentInventory)
+	private static void displayBedAndBath(ArrayList<Item> currentInventory, Scanner keyboard)
 	{
+		int choice = 0;
+		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("bed_bath"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		getCategoryItemChoice(keyboard);
+		
+		System.out.println();
 	}
 	
-	private static void displayHomeImprovement(ArrayList<Item> currentInventory)
+	private static void displayHomeImprovement(ArrayList<Item> currentInventory, Scanner keyboard)
 	{
+		int choice = 0;
+		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("home_improvement"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		getCategoryItemChoice(keyboard);
+		
+		System.out.println();
 	}
 	
-	private static void displayKitchen(ArrayList<Item> currentInventory)
+	private static void displayKitchen(ArrayList<Item> currentInventory, Scanner keyboard)
 	{
+		int choice = 0;
+		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("kitchen"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		getCategoryItemChoice(keyboard);
+		
+		System.out.println();
 	}
 	
-	private static void displayOutdoor(ArrayList<Item> currentInventory)
+	private static void displayOutdoor(ArrayList<Item> currentInventory, Scanner keyboard)
 	{
+		int choice = 0;
+		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
 		for (int i = 0; i < currentInventory.size(); i++)
 			if (currentInventory.get(i).getItemType().equals("outdoor"))
+			{
 				System.out.println(i + 1 + ": " + currentInventory.get(i));
+				System.out.println("---------------");
+			}
+		
+		System.out.println("0 takes you back to the menu.");
+		System.out.println("---------------");
+		
+		getCategoryItemChoice(keyboard);
+		
+		System.out.println();
 	}
+	
 }

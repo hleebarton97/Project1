@@ -1,1 +1,4 @@
-Test,T,Testing,test@test.com,4meonly,true
+Test,T,Testing,test@test.com,4meonly,ADMIN,null
+Henry,L,Barton,hleebarton97@gmail.com,4leeonly,MEMBER,0.0
+No,N,Nobody,nobody@nothere.net,who?,STANDARD,null
+Ee,E,Eee,e@e,e,MEMBER,0.0
