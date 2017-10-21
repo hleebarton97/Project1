@@ -55,27 +55,27 @@ public class Console
 					break;
 					
 				case 2:
-					//displayRugs(currentInventory);
+					displayRugs(currentInventory);
 					break;
 				
 				case 3:
-					//displayDecor(currentInventory);
+					displayDecor(currentInventory);
 					break;
 					
 				case 4:
-					//displayBedAndBath(currentInventory);
+					displayBedAndBath(currentInventory);
 					break;
 					
 				case 5:
-					//displayHomeImprovement(currentInventory);
+					displayHomeImprovement(currentInventory);
 					break;
 					
 				case 6:
-					//displayKitchen(currentInventory);
+					displayKitchen(currentInventory);
 					break;
 					
 				case 7:
-					//displayOutdoor(currentInventory);
+					displayOutdoor(currentInventory);
 					break;
 					
 				case 8:
@@ -94,7 +94,7 @@ public class Console
 		
 		System.exit(0);
 	}
-	
+
 	/**
 	 * The loginMenu method prompts the user
 	 * to login or register and returns the
@@ -234,5 +234,53 @@ public class Console
 	public static void displayFurniture(ArrayList<Item> currentInventory)
 	{
 		
+		System.out.println("Select a Furniture Item to add to your shopping cart");
+		System.out.println("---------------");
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("furniture"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
+	}
+	
+	
+	private static void displayRugs(ArrayList<Item> currentInventory) 
+	{
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("rugs"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
+	}
+	
+	private static void displayDecor(ArrayList<Item> currentInventory)
+	{
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("decor"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
+	}
+	
+	private static void displayBedAndBath(ArrayList<Item> currentInventory)
+	{
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("bed_bath"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
+	}
+	
+	private static void displayHomeImprovement(ArrayList<Item> currentInventory)
+	{
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("home_improvement"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
+	}
+	
+	private static void displayKitchen(ArrayList<Item> currentInventory)
+	{
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("kitchen"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
+	}
+	
+	private static void displayOutdoor(ArrayList<Item> currentInventory)
+	{
+		for (int i = 0; i < currentInventory.size(); i++)
+			if (currentInventory.get(i).getItemType().equals("outdoor"))
+				System.out.println(i + 1 + ": " + currentInventory.get(i));
 	}
 }
