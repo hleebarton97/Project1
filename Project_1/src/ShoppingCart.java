@@ -46,6 +46,12 @@ public class ShoppingCart
 			System.out.println("Your cart is currently empty!");
 	}
 	
+	public void clearCart()
+	{
+		this.cart = new ArrayList<Item>();
+		this.numItems = 0;
+	}
+	
 	public int getNumItems()
 	{
 		return numItems;
@@ -63,7 +69,9 @@ public class ShoppingCart
 	
 	public Item getItemAt(int i)
 	{
+
 		return cart.get(i);
+
 	}
 	
 	@Override
@@ -80,11 +88,4 @@ public class ShoppingCart
 		
 		return null;
 	}
-	
-	/*public void checkOut(char isMember)
-	{
-		chargeUser();
-		printReceipt();
-		updateInventory();
-	}*/
 }

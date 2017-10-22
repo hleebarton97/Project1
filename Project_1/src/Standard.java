@@ -13,13 +13,21 @@ public class Standard extends User
 	@Override
 	public String toString() 
 	{
-		return null;
+		return "";
 	}
 
 	@Override
 	public double getReward() 
 	{
 		return -1;
+	}
+	@Override
+	public void setReward(double reward) {}
+
+	@Override
+	public ShoppingCart getCart() 
+	{
+		return this.cart;
 	}
 
 	@Override

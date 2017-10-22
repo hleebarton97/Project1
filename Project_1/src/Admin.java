@@ -23,5 +23,9 @@ public class Admin extends User
 	public void removeItemFromCart(int choice) {}
 	@Override
 	public boolean cartIsEmpty() {return false;}
+	@Override
+	public ShoppingCart getCart() { return null; }
+	@Override
+	public void setReward(double reward) {}
 
 }

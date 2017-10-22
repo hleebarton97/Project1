@@ -3,13 +3,16 @@
 */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.io.*;
+import java.text.SimpleDateFormat;
 
 public class Database
 {
 	private ArrayList<Item> inventory;
 	private ArrayList<User> accounts;
+	private ArrayList<History> history;
 
 	/**
 	 * Constructor
@@ -19,9 +22,11 @@ public class Database
 	{
 		inventory = new ArrayList<Item>();
 		accounts = new ArrayList<User>();
+		history = new ArrayList<History>();
 		
 		parseInventoryFromFile();
 		parseUserAccountsFromFile();
+		parseHistoryFromFile();
 	}
 	
 	/**
@@ -66,6 +71,46 @@ public class Database
 		inputFile.close();
 	}
 	
+	public void parseHistoryFromFile() throws FileNotFoundException
+	{
+		String fileName = "src/DB/History.txt";
+		String input;
+		File file = new File(fileName);
+		Scanner inputFile = new Scanner(file);
+		
+		int i = 0;
+		String email;
+		String firstName;
+		String lastName;
+		String date;
+		int itemCount;
+		double price;
+		ArrayList<String> itemNames = new ArrayList<String>();
+		
+		while(inputFile.hasNext())
+		{
+			String[] tokens;
+			input = inputFile.nextLine();
+			tokens = input.split(",");
+			email = tokens[0];
+			firstName = tokens[1];
+			lastName = tokens[2];
+			date = tokens[3];
+			itemCount = Integer.parseInt(tokens[4]);
+			price = Double.parseDouble(tokens[5]);
+			
+			for(int j = 6; j < tokens.length; j++)
+				itemNames.add(tokens[j]);
+			
+
+			history.add(i, new History(email, firstName, lastName, date, itemCount, price, itemNames));
+				
+			i++;
+		}
+		
+		inputFile.close();
+	}
+	
 	/**
 	 * The writeCurrentInventory method creates a PrintWriter output file object
 	 * and opens the Inventory.txt file for overwriting.
@@ -75,12 +120,31 @@ public class Database
 	 * @param currentInventory The ArrayList of Items to overwrite the Inventory file with.
 	 * @throws FileNotFoundException
 	 */
-	public void writeCurrentInventory(ArrayList<Item> currentInventory) throws FileNotFoundException
+	public void writeCurrentInventory() throws FileNotFoundException
 	{
 		PrintWriter outputFile = new PrintWriter("src/DB/Inventory.txt");
 		String outputLine;
 		
 		for (Item itm : inventory)
+		{
+			outputLine = "";
+			outputLine += itm.getItemType() + ","
+					+ itm.getItemName() + ","
+					+ itm.getItemPrice() + ","
+					+ itm.getItemQuantity();
+			
+			outputFile.println(outputLine);
+		}
+		
+		outputFile.close();
+	}
+	
+	public void writeCurrentInventory(ArrayList<Item> currentInventory) throws FileNotFoundException
+	{
+		PrintWriter outputFile = new PrintWriter("src/DB/Inventory.txt");
+		String outputLine;
+		
+		for (Item itm : currentInventory)
 		{
 			outputLine = "";
 			outputLine += itm.getItemType() + ","
@@ -238,6 +302,18 @@ public class Database
 		}
 	}
 	
+	public void addUserHistory(History newHistory)
+	{
+		history.add(newHistory);
+		
+		try {
+			writeToHistory(); }
+		catch(FileNotFoundException e) {
+			System.out.println();
+			System.out.println(e);
+			System.out.println(); }
+	}
+	
 	/**
 	 * The writeCurrentUserAccounts method creates a PrintWriter output file object
 	 * and opens the UserAccounts.txt file for overwriting.
@@ -262,6 +338,7 @@ public class Database
 					+ anAccount.getType();
 			
 			// Check acct type for rewards.
+			
 			if(anAccount.getType().equals("MEMBER") && anAccount instanceof Member)
 				outputLine += "," + anAccount.getReward();
 			else
@@ -271,6 +348,68 @@ public class Database
 		}
 		
 		outputFile.close();
+	}
+	
+	public void updateUser(User user) throws FileNotFoundException
+	{
+		for(User anAccount : accounts)
+		{
+			if(anAccount.getEmail() == user.getEmail())
+			{
+				anAccount = user;
+			}
+		}
+		
+		writeCurrentUserAccounts();
+	}
+	
+	public void upgradeUser(User user)
+	{
+		int i = this.accountExistsAt(user.getEmail(), user.getPassword());
+		
+		accounts.remove(i);
+		accounts.add(user);
+		
+		try {
+			writeCurrentUserAccounts();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateHistory(History newHistory) throws FileNotFoundException
+	{
+		for(History pastHistory : history)
+		{
+			pastHistory = newHistory;
+		}
+		
+		writeToHistory();
+	}
+	
+	public void writeToHistory() throws FileNotFoundException
+	{
+		PrintWriter outputFile = new PrintWriter("src/DB/History.txt");
+		String outputLine;
+		
+		for(History his : history)
+		{
+			outputLine = "";
+			outputLine += his.getEmail() + "," // Email of user
+					+ his.getFirstName() + "," // First name of user
+					+ his.getLastName() + "," 	// Last name of user
+					+ his.getDate() + ","			// Time of purchase
+					+ his.getItemCount() + "," 	// Number of items purchased
+					+ his.getPrice(); 					// Total price purchased with tax.
+			
+			for(int i = 0; i < his.getItems().size(); i++)
+				outputLine += "," + his.getItems().get(i); // Each item of purchase by user.
+			
+			outputFile.println(outputLine); // Write history to file.
+		}
+		
+		outputFile.close();
+		
 	}
 
 	public void displayInventory()
@@ -297,5 +436,27 @@ public class Database
 				System.out.println();
 			}
 		}
+	}
+	
+	public void displayHistory(String email)
+	{
+		boolean found = false;
+		
+		for (History pastHistory : history)
+		{
+			if(pastHistory.getEmail().equalsIgnoreCase(email))
+			{
+				if(!found)
+					System.out.println("\nPURCHASE HISTORY");
+				
+				System.out.println(pastHistory.toString());
+				System.out.println(1);
+				found = true;
+			}
+		}
+		
+		if(!found)
+			System.out.println("User has no history!");
+				
 	}
 }

@@ -21,6 +21,12 @@ public class Member extends User
 	{
 		return this.reward;
 	}
+	
+	@Override
+	public ShoppingCart getCart() 
+	{
+		return this.cart;
+	}
 
 	@Override
 	public String toString() 

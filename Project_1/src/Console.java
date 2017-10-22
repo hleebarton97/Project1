@@ -42,48 +42,71 @@ public class Console
 		// display welcome message
 		System.out.println("Welcome " + myAccount.getFirstName() + "\n");
 		
-		// allow the user to browse the inventory
-		do
+		if(myAccount instanceof Admin)
 		{
-			// display the items main menu
-			choice = getItemMenuChoice(keyboard);
-		
-			// display the items sub-menu
-			switch(choice)
+			do
 			{
-				case 1:
-					displayFurniture(currentInventory, myAccount, keyboard);
-					break;
-					
-				case 2:
-					displayRugs(currentInventory, myAccount, keyboard);
-					break;
+				choice = getAdminMenuChoice(keyboard);
 				
-				case 3:
-					displayDecor(currentInventory, myAccount, keyboard);
-					break;
-					
-				case 4:
-					displayBedAndBath(currentInventory, myAccount, keyboard);
-					break;
-					
-				case 5:
-					displayHomeImprovement(currentInventory, myAccount, keyboard);
-					break;
-					
-				case 6:
-					displayKitchen(currentInventory, myAccount, keyboard);
-					break;
-					
-				case 7:
-					displayOutdoor(currentInventory, myAccount, keyboard);
-					break;
-					
-				case 8:
-					displayCart(currentInventory, myAccount, keyboard);
-					break;
+				switch(choice)
+				{
+					case 1:
+						displayUserHistory(myDatabase, keyboard);
+						break;
+						
+				}
 			}
-		} while (choice != 9);
+			while(choice != 2);
+		}
+		else
+		{
+			// allow the user to browse the inventory
+			do
+			{
+				// display the items main menu
+				choice = getItemMenuChoice(keyboard);
+			
+				// display the items sub-menu
+				switch(choice)
+				{
+					case 1:
+						displayFurniture(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 2:
+						displayRugs(currentInventory, myAccount, keyboard);
+						break;
+					
+					case 3:
+						displayDecor(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 4:
+						displayBedAndBath(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 5:
+						displayHomeImprovement(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 6:
+						displayKitchen(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 7:
+						displayOutdoor(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 8:
+						displayCart(currentInventory, myAccount, keyboard);
+						break;
+						
+					case 9:
+						checkout(currentInventory, myAccount, myDatabase, keyboard);
+						break;
+				}
+			} while (choice != 10);
+		}
 		
 		// update the UserAccount file
 		myDatabase.writeCurrentUserAccounts();
@@ -94,6 +117,49 @@ public class Console
 		//TODO: Some method to save the state of a user's shopping cart
 		
 		System.exit(0);
+	}
+	
+	public static void checkout(ArrayList<Item> currentInventory, User myAccount, Database myDatabase, Scanner keyboard)
+	{
+		// create checkout system
+		Checkout myCheckout = new Checkout(myAccount.getCart(), myAccount);
+		
+		String input;
+		boolean error = false;
+		
+		if(!myAccount.cartIsEmpty())
+		{
+			myAccount.showCart();
+			do
+			{
+				error = false;
+				
+				System.out.print("Are you sure you want to checkout? (Y/N): ");
+				input = keyboard.nextLine(); // Receive input.
+				System.out.println();
+				
+				// Check answer and create a appropriate account.
+				String tempInput = input.toUpperCase();
+				
+				if(tempInput.equals("Y"))
+				{
+					myCheckout.printReceipt();
+					myCheckout.updateDatabase(myDatabase, currentInventory);
+				}
+				else if(tempInput.equals("N"))
+				{
+					return;
+				}
+				else
+				{
+					error = true;
+					System.out.println("ERROR: Invalid Input.");
+				}
+			}
+			while(error);
+		}
+		else
+			System.out.println("Your cart is empty! Please shop to checkout!\n");
 	}
 	
 	/**
@@ -147,6 +213,8 @@ public class Console
 	{
 		// variables needed to login
 		String email, password;
+		boolean error = false;
+		String input;
 		
 		// to hold a UserAccount
 		User myAccount;
@@ -169,6 +237,41 @@ public class Console
 		}
 		else
 			myAccount = myDatabase.getUserAccountAt(index);
+		
+		if(myAccount instanceof Standard)
+		{ 	
+			do
+			{
+				error = false;
+				
+				System.out.print("Would you like to become a UClub Member for $19.95 annually? (Y/N): ");
+				input = keyboard.nextLine(); // Receive input.
+				System.out.println();
+				
+				// Check answer and create a appropriate account.
+				String tempInput = input.toUpperCase();
+				
+				if(tempInput.equals("Y"))
+				{
+					myAccount = new Member(myAccount.getFirstName(), myAccount.getMiddleInitial(), myAccount.getLastName(), myAccount.getEmail(), myAccount.getPassword(), 0.0);
+					System.out.println("Your account has now been upgraded! You have been charged the $19.95 annual fee!\n");
+					try {
+						myDatabase.upgradeUser(myAccount); }
+					catch(Exception e) {
+						System.out.println("Problem upgrading the account."); }
+				}
+				else if(tempInput.equals("N"))
+				{
+					return myAccount;
+				}
+				else
+				{
+					error = true;
+					System.out.println("ERROR: Member input selection invalid.");
+				}
+			}
+			while(error);
+		}
 		
 		return myAccount;
 	}
@@ -246,13 +349,51 @@ public class Console
 		
 		return myAccount;
 	}
-
-	public static int getItemMenuChoice(Scanner keyboard)
+	
+	public static int getAdminMenuChoice(Scanner keyboard)
 	{
-		int choice;
+		int choice = 0;
+		boolean error = false;
+		
+		System.out.println("Admin Options: ");
+		System.out.println("-------------------------------");
+		System.out.println("1: View User Purchase History");
+		System.out.println("2: Log Out");
+		System.out.println("-------------------------------");
 		
 		do
 		{
+			System.out.print(":: ");
+			
+			try {
+				choice = keyboard.nextInt(); }
+			catch(Exception e) {
+				System.out.println("ERROR: Invalid choice.\n");
+				error = true; }
+			
+			keyboard.nextLine(); // remove the newline character from the keyboard buffer
+			System.out.println();
+			
+			if (choice < 1 || choice > 2)
+			{
+				if(!error)
+				{
+					System.out.println("ERROR: Please select a valid menu choice.\n");
+					error = true;
+				}
+			}
+		}
+		while(error);
+		
+		return choice;
+	}
+
+	public static int getItemMenuChoice(Scanner keyboard)
+	{
+		int choice = 0;
+		boolean error = false;
+		
+			
 			System.out.println("Item Categories");
 			System.out.println("------------------");
 			System.out.println("1: Furniture");
@@ -264,16 +405,32 @@ public class Console
 			System.out.println("7: Outdoor");
 			System.out.println();
 			System.out.println("8: View Shopping Cart");
-			System.out.println("9: Log Out");
+			System.out.println("9: Checkout");
+			System.out.println("10: Log Out");
 			
+		do
+		{
 			System.out.print(":: ");
-			choice = keyboard.nextInt();
+			
+			try {
+				choice = keyboard.nextInt(); }
+			catch(Exception e) {
+				System.out.println("ERROR: Invalid choice.\n");
+				error = true; }
+			
 			keyboard.nextLine(); // remove the newline character from the keyboard buffer
 			System.out.println();
-			if (choice < 1 || choice > 9)
-				System.out.println("ERROR: Please select a valid menu choice.\n");
 			
-		} while (choice < 1 || choice > 9);
+			if (choice < 1 || choice > 10)
+			{	
+				if(!error)
+				{
+					System.out.println("ERROR: Please select a valid menu choice.\n");
+					error = true;
+				}
+			}
+			
+		} while (error);
 		
 		return choice;
 	}
@@ -334,19 +491,36 @@ public class Console
 	public static void displayCart(ArrayList<Item> currentInventory, User myAccount, Scanner keyboard)
 	{
 		int choice = 0;
+		boolean error = false;
 		
 		myAccount.showCart();
 		
 		if(!myAccount.cartIsEmpty())
 		{
-			System.out.println("Please enter 0 to continue");
-			System.out.println("Or enter the item number to remove it from the cart.");
-			System.out.println("-----------------------------------------");
-			
-			choice = getCartOptionChoice(keyboard);
-			
-			if(choice != 0)
-				myAccount.removeItemFromCart(choice);
+			do
+			{
+				error = false;
+				System.out.println("Please enter 0 to continue");
+				System.out.println("Or enter the item number to remove it from the cart.");
+				System.out.println("-----------------------------------------");
+				
+				try {
+					choice = getCartOptionChoice(keyboard); }
+				catch(Exception e) {
+					System.out.println("Invalid Item Number. Please try again.\n\n");
+					error = true; }
+				
+				if(choice > myAccount.getCart().getNumItems())
+				{
+					System.out.println("That item number does not exist.");
+					System.out.println();
+					error = true;
+				}
+				
+				if(choice != 0 && !error)
+					myAccount.removeItemFromCart(choice);
+			}
+			while(error);
 		}
 		else
 		{
@@ -359,6 +533,33 @@ public class Console
 		}
 		
 		System.out.println();
+	}
+	
+	public static void displayUserHistory(Database myDatabase, Scanner keyboard)
+	{
+		String email = "";
+		boolean error = false;
+		
+		do
+		{
+			error = false;
+			
+			System.out.print("Enter the email address of the user: ");
+			email = keyboard.nextLine();
+			
+			// check that this is a valid email address in our database
+			boolean exists = myDatabase.emailExists(email);
+			
+			if (!exists)
+			{
+				System.out.println("That email does not exist.\nPlease try again.\n");
+				error = true;
+			}
+		}
+		while(error);
+		
+		myDatabase.displayHistory(email);
+		
 	}
 	
 // ------------- DISPLAY CATEGORIES ---------------- //	

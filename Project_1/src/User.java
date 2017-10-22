@@ -117,9 +117,11 @@ public abstract class User
 	
 	public abstract void showCart();
 	public abstract double getReward();
+	public abstract void setReward(double reward);
 	public abstract void addItemToCart(Item item);
 	public abstract void removeItemFromCart(int choice);
 	public abstract boolean cartIsEmpty();
+	public abstract ShoppingCart getCart();
 	
 	public abstract String toString();
 }
